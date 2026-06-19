@@ -14,7 +14,7 @@ async function readTodos() {
   try {
     const data = await fs.readFile(dataFile, 'utf-8');
     return JSON.parse(data);
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
   try {
     const todos = await readTodos();
     res.json(todos);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch todos' });
   }
 });
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
     todos.push(newTodo);
     await writeTodos(todos);
     res.status(201).json(newTodo);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to create todo' });
   }
 });
@@ -65,7 +65,7 @@ router.put('/:id', async (req, res) => {
     const { title, description, completed } = req.body;
 
     const todos = await readTodos();
-    const todoIndex = todos.findIndex(t => t.id === id);
+    const todoIndex = todos.findIndex((t) => t.id === id);
 
     if (todoIndex === -1) {
       return res.status(404).json({ error: 'Todo not found' });
@@ -80,7 +80,7 @@ router.put('/:id', async (req, res) => {
 
     await writeTodos(todos);
     res.json(todos[todoIndex]);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to update todo' });
   }
 });
@@ -91,7 +91,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     const todos = await readTodos();
-    const todoIndex = todos.findIndex(t => t.id === id);
+    const todoIndex = todos.findIndex((t) => t.id === id);
 
     if (todoIndex === -1) {
       return res.status(404).json({ error: 'Todo not found' });
@@ -100,7 +100,7 @@ router.delete('/:id', async (req, res) => {
     const deletedTodo = todos.splice(todoIndex, 1);
     await writeTodos(todos);
     res.json(deletedTodo[0]);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete todo' });
   }
 });

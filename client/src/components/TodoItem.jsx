@@ -56,23 +56,13 @@ function TodoItem({ todo, onToggleComplete, onDeleteTodo, onUpdateTodo }) {
           <div className="todo-content">
             <h3 className="todo-title">{todo.title}</h3>
             {todo.description && <p className="todo-description">{todo.description}</p>}
-            <small className="todo-date">
-              {new Date(todo.createdAt).toLocaleDateString()}
-            </small>
+            <small className="todo-date">{new Date(todo.createdAt).toLocaleDateString()}</small>
           </div>
           <div className="todo-actions">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="btn-edit"
-              title="Edit"
-            >
+            <button onClick={() => setIsEditing(true)} className="btn-edit" title="Edit">
               ✏️
             </button>
-            <button
-              onClick={() => onDeleteTodo(todo.id)}
-              className="btn-delete"
-              title="Delete"
-            >
+            <button onClick={() => onDeleteTodo(todo.id)} className="btn-delete" title="Delete">
               🗑️
             </button>
           </div>

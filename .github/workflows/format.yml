@@ -1,0 +1,59 @@
+name: Format - Auto-fix Prettier & ESLint
+
+on:
+  workflow_dispatch
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      # Client Format
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Format client with Prettier
+        working-directory: ./client
+        run: npx prettier --write src
+
+      - name: Fix client ESLint issues
+        working-directory: ./client
+        run: npx eslint src --ext .js,.jsx,.ts,.tsx --fix
+
+      # Server Format
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: Format server with Prettier
+        working-directory: ./server
+        run: npx prettier --write .
+
+      - name: Fix server ESLint issues
+        working-directory: ./server
+        run: npx eslint . --ext .js --fix --ignore-pattern node_modules
+
+      # Commit changes
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "chore: format code with Prettier and ESLint" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}

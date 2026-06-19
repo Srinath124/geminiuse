@@ -43,7 +43,7 @@ function App() {
   const updateTodo = async (id, updatedData) => {
     try {
       const response = await axios.put(`${API_URL}/${id}`, updatedData);
-      setTodos(todos.map(todo => (todo.id === id ? response.data : todo)));
+      setTodos(todos.map((todo) => (todo.id === id ? response.data : todo)));
     } catch (err) {
       setError('Failed to update todo');
       console.error('Error updating todo:', err);
@@ -53,7 +53,7 @@ function App() {
   const deleteTodo = async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
-      setTodos(todos.filter(todo => todo.id !== id));
+      setTodos(todos.filter((todo) => todo.id !== id));
     } catch (err) {
       setError('Failed to delete todo');
       console.error('Error deleting todo:', err);
@@ -68,11 +68,11 @@ function App() {
     <div className="app">
       <div className="container">
         <h1>📝 My Todo App</h1>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <TodoForm onAddTodo={addTodo} />
-        
+
         {loading ? (
           <div className="loading">Loading todos...</div>
         ) : (

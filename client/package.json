@@ -4,16 +4,20 @@
   "description": "React frontend for Todo application",
   "private": true,
   "dependencies": {
+    "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "axios": "^1.6.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src"
   },
   "eslintConfig": {
     "extends": [
@@ -32,5 +36,10 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.8.4"
+  }
 }

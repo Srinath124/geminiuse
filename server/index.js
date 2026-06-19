@@ -1,13 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import todoRoutes from './routes/todos.js';
 import 'dotenv/config';
 
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const PORT = process.env.PORT || 5000;
 
