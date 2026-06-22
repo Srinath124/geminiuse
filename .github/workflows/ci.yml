@@ -84,3 +84,58 @@ jobs:
       - name: Server build check
         working-directory: ./server
         run: node -c index.js
+
+  deploy-netlify:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      # Install and build client
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Build client with environment variables
+        working-directory: ./client
+        run: npm run build
+        env:
+          # React environment variables (exposed to browser - safe to use)
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'https://api.example.com' }}
+          # Do NOT expose NETLIFY_AUTH_TOKEN or other secrets here
+          CI: false
+
+      # Deploy to Netlify
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0.0
+        with:
+          publish-dir: './client/build'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+          alias: ${{ github.head_ref }}
+        env:
+          # Netlify credentials (kept private in secrets)
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 5
+
+      - name: Comment PR with deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Deploy preview ready! Preview URL will be available shortly.'
+            })
