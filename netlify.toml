@@ -2,8 +2,8 @@
 # Documentation: https://docs.netlify.com/configure-builds/file-based-configuration/
 
 [build]
-  # Build command
-  command = "npm run build"
+  # Build command - install client dependencies then build
+  command = "npm ci --prefix client && npm --prefix client run build"
   # Directory to deploy (the React build output)
   publish = "client/build"
   # Node version
