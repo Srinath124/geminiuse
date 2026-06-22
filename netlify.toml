@@ -1,0 +1,51 @@
+# Netlify Configuration
+# Documentation: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Build command - install client dependencies then build
+  command = "npm ci --prefix client && npm --prefix client run build"
+  # Directory to deploy (the React build output)
+  publish = "client/build"
+  # Node version
+  functions = "server"
+
+[build.environment]
+  # Do NOT add sensitive secrets here - use Netlify UI or API
+  # Secrets should be stored in Netlify Environment Variables settings
+  NODE_ENV = "production"
+  # Use REACT_APP_ prefix for vars exposed to React client
+  # REACT_APP_API_URL is set via Netlify Environment Variables
+
+[context.production]
+  # Production environment settings
+  command = "npm ci && npm run build"
+  environment = { NODE_ENV = "production" }
+
+[context.deploy-preview]
+  # Deploy preview (PR) environment settings
+  command = "npm ci && npm run build"
+
+[context.branch-deploy]
+  # Branch deploy environment settings  
+  command = "npm ci && npm run build"
+
+# Redirect API calls to backend (if deployed on same domain)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA routing - redirect all non-file requests to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
